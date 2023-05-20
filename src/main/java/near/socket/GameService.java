@@ -23,7 +23,7 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 2;
+    static final int LIMIT = 4;
     @Scheduled(cron = "0/3 * * * * ?")
     public void autoUpdate() throws Exception {
 
