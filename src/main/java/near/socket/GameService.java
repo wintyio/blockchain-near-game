@@ -44,12 +44,12 @@ public class GameService {
 
     @Scheduled(cron = "0/1 * * * * ?")
     public void overTime() throws Exception {
-        for (Player player : readyQueue) {
-            if (!player.getSession().isOpen()) {
-                readyQueue.remove(player);
-                break;
-            }
-        }
+        // for (Player player : readyQueue) {
+        //    if (!player.getSession().isOpen()) {
+        //        readyQueue.remove(player);
+        //         break;
+        //     }
+        // }
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
             if (room.getTime() == 0) {
@@ -78,12 +78,12 @@ public class GameService {
                 gameRooms.remove(room.getRoomId());
                 continue;
             }
-            for (Player player : room.getPlayers().values()) {
-                if (!player.getSession().isOpen()) {
-                    room.getPlayers().remove(player.getSession());
-                    break;
-                }
-            }
+            // for (Player player : room.getPlayers().values()) {
+            //     if (!player.getSession().isOpen()) {
+            //         room.getPlayers().remove(player.getSession());
+            //         break;
+            //     }
+            // }
             room.sendTime(this);
             Card[][] mp = room.getMatrix();
             int r = room.getR();
@@ -91,7 +91,7 @@ public class GameService {
             boolean ok = false;
             for (int i=0; i<r; i++) {
                 for (int j=0; j<c; j++) {
-                    if (mp[i][j].getTime() + 3000 <= System.currentTimeMillis() && mp[i][j].isOpened() && !mp[i][j].isClosed()) {
+                    if (mp[i][j].getTime() + 2000 <= System.currentTimeMillis() && mp[i][j].isOpened() && !mp[i][j].isClosed()) {
                         mp[i][j].setOpened(false);
                         ok = true;
                     }
