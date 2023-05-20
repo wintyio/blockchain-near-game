@@ -76,9 +76,9 @@ public class GameRoom {
                                     sendPoint(service);
                                 } else {
                                     sendMap(service);
-                                    Thread.sleep(100);
                                     card.setOpened(false);
                                     card2.setOpened(false);
+                                    Thread.sleep(50);
                                 }
                             }
                         }
