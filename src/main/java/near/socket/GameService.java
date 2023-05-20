@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.io.IOException;
 import java.util.*;
@@ -58,6 +59,14 @@ public class GameService {
                 }
             }
             if (ok) room.sendMap(this);
+        }
+    }
+
+    public void exit(WebSocketSession session) {
+        for (Player player : readyQueue) {
+            if (player.getSession().equals(session)) {
+                readyQueue.remove(player);
+            }
         }
     }
 
