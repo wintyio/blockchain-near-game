@@ -22,7 +22,7 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 1;
+    static final int LIMIT = 2;
     @Scheduled(cron = "0/5 * * * * ?")
     public void autoUpdate() throws Exception {
 
@@ -74,6 +74,17 @@ public class GameService {
                 .session(session)
                 .build();
         readyQueue.add(player);
+        List<String> names = new ArrayList<>();
+        for (Player p : readyQueue) {
+            names.add(p.getAccountId());
+        }
+        ChatDTO chatDTO = ChatDTO.builder()
+                .type(ChatDTO.MessageType.READY)
+                .names(names)
+                .build();
+        for (Player p : readyQueue) {
+            sendMessage(p.getSession(), chatDTO);
+        }
     }
 
     public List<GameRoom> findAllRoom(){
@@ -98,7 +109,6 @@ public class GameService {
     }
 
     public <T> void sendMessage(WebSocketSession session, T message) {
-        log.info("howwww");
         try{
             session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
         } catch (IOException e) {
