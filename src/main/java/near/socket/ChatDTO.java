@@ -18,7 +18,7 @@ import java.util.Map;
 public class ChatDTO {
     // 메시지  타입 : 입장, 채팅
     public enum MessageType{
-        ENTER, TALK, OPEN, START, MAP, POINT, READY, TIME
+        ENTER, TALK, OPEN, START, MAP, POINT, READY, TIME, WIN, LOSE
     }
 
     private MessageType type; // 메시지 타입

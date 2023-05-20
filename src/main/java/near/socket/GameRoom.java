@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Slf4j
@@ -19,6 +16,19 @@ public class GameRoom {
     private int time;
     private int r;
     private int c;
+
+    private static int[] shuffle(int[] numberList) {
+        for (int i = 0; i < numberList.length; i++) {
+            int a = (int) (Math.random() * numberList.length);
+
+            int tmp = numberList[a];
+            numberList[a] = numberList[i];
+            numberList[i] = tmp;
+        }
+
+        return numberList;
+    }
+
     @Builder
     public GameRoom(String roomId, int r, int c) {
         this.roomId = roomId;
@@ -28,13 +38,22 @@ public class GameRoom {
         log.info("game room builder called");
 
         matrix = new Card[r][c];
+        int order[] = new int[r*c];
+        order[0] = -1;
+        order[1] = -1;
+        order[2] = -1;
+        order[3] = -1;
         int now = 1;
         int cnt = 0;
+        for (int i=4; i<r*c; i++) {
+            order[i] = now;
+            cnt ^= 1;
+            if (cnt == 0) now++;
+        }
+        shuffle(order);
         for (int i=0; i<r; i++) {
             for (int j=0; j<c; j++) {
-                matrix[i][j] = Card.builder().num(now).build();
-                cnt ^= 1;
-                if (cnt == 0) now++;
+                matrix[i][j] = Card.builder().num(order[j*r + i]).build();
             }
         }
         // Math.random() 사용 배열 섞기
@@ -116,6 +135,11 @@ public class GameRoom {
         for (Player player : players.values()) {
             chatDTO.getPoints().put(player.getAccountId(), player.getPoint());
         }
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
+    }
+
+    public <T> void sendLose(GameService service) {
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.LOSE).build();
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 

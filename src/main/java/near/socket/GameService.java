@@ -23,8 +23,8 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 1;
-    @Scheduled(cron = "0/5 * * * * ?")
+    static final int LIMIT = 2;
+    @Scheduled(cron = "0/3 * * * * ?")
     public void autoUpdate() throws Exception {
 
         // 세션 끊기면 삭제하기 필요
@@ -46,6 +46,23 @@ public class GameService {
     public void overTime() throws Exception {
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
+            if (room.getTime() == 0) {
+                Player best = null;
+                // 동점자 처리 필요
+                for (Player player : room.getPlayers().values()) {
+                    if (best == null || best.getPoint() < player.getPoint()) {
+                        best = player;
+                    }
+                }
+                sendMessage(best.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).build());
+                room.getPlayers().remove(best.getSession());
+                room.sendLose(this);
+                for (Player p : room.getPlayers().values()) {
+                    p.getSession().close();
+                }
+                gameRooms.remove(room.getRoomId());
+                continue;
+            }
             room.sendTime(this);
             Card[][] mp = room.getMatrix();
             int r = room.getR();
