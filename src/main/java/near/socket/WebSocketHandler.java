@@ -30,6 +30,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
         else if (chatMessage.getType().equals(ChatDTO.MessageType.OPEN)) {
             GameRoom room = service.findRoomById(chatMessage.getRoomId());
+            if (room == null) return;
+            if (room.getPlayers().get(session) == null) return;
             room.handleAction(session, chatMessage, service);
         }
     }
