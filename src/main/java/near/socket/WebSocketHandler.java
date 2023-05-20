@@ -28,7 +28,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             // 중복 검사 로직 필요
             service.ready(session, chatMessage.getAccountId());
         }
-        else if (chatMessage.getType().equals(ChatDTO.MessageType.TALK)) {
+        else if (chatMessage.getType().equals(ChatDTO.MessageType.OPEN)) {
             GameRoom room = service.findRoomById(chatMessage.getRoomId());
             room.handleAction(session, chatMessage, service);
         }
