@@ -20,21 +20,22 @@ import java.util.*;
 public class GameService {
     private final ObjectMapper mapper;
     private Map<String, GameRoom> gameRooms;
-    private Set<WebSocketSession> readyQueue;
+    private Set<Player> readyQueue;
 
+    static final int LIMIT = 1;
     @Scheduled(cron = "0/5 * * * * ?")
     public void autoUpdate() throws Exception {
 
         // 세션 끊기면 삭제하기 필요
         log.info("queue size : {}", readyQueue.size());
-        if (readyQueue.size() >= 2) {
+        if (readyQueue.size() >= LIMIT) {
             String roomId = UUID.randomUUID().toString();
             GameRoom room = createRoom();
             log.info("roomId {} created", roomId);
-            for (int i=0; i<2; i++) {
-                WebSocketSession session = readyQueue.iterator().next();
-                readyQueue.remove(session);
-                room.addPlayer(session);
+            for (int i=0; i<LIMIT; i++) {
+                Player player = readyQueue.iterator().next();
+                readyQueue.remove(player);
+                room.addPlayer(player);
             }
             gameRooms.put(roomId, room);
             room.sendStart(this);
@@ -67,8 +68,13 @@ public class GameService {
         readyQueue = new LinkedHashSet<>();
     }
 
-    public void ready(WebSocketSession session) {
-        readyQueue.add(session);
+    public void ready(WebSocketSession session, String accountId) {
+        Player player = Player.builder()
+                .point(0)
+                .accountId(accountId)
+                .session(session)
+                .build();
+        readyQueue.add(player);
     }
 
     public List<GameRoom> findAllRoom(){

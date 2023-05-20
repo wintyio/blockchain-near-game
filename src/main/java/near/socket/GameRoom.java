@@ -35,8 +35,8 @@ public class GameRoom {
         // Math.random() 사용 배열 섞기
     }
 
-    public void addPlayer(WebSocketSession session) {
-        players.put(session, Player.builder().point(0).build());
+    public void addPlayer(Player player) {
+        players.put(player.getSession(), player);
     }
 
     public void handleAction(WebSocketSession session, ChatDTO message, GameService service) {
@@ -91,7 +91,8 @@ public class GameRoom {
     }
 
     public <T> void sendStart(GameService service) {
-        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), "start"));
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.START).roomId(getRoomId()).build();
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendMessage(T message, GameService service) {
