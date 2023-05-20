@@ -44,7 +44,9 @@ public class GameRoom {
 
     public void handleAction(WebSocketSession session, ChatDTO message, GameService service) {
         Player player = players.get(session);
-
+        for (Player p : players.values()) {
+            log.info("player : {}", p);
+        }
         switch (message.getType()) {
             case TALK:
                 sendMessage(message, service);
@@ -95,7 +97,7 @@ public class GameRoom {
             }
         }
         chatDTO.setMap(mp);
-        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), mp));
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendPoint(GameService service) {
