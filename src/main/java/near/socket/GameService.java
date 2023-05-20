@@ -52,7 +52,7 @@ public class GameService {
             boolean ok = false;
             for (int i=0; i<r; i++) {
                 for (int j=0; j<c; j++) {
-                    if (mp[i][j].getTime() + 3000 >= System.currentTimeMillis() && mp[i][j].isOpened() && !mp[i][j].isClosed()) {
+                    if (mp[i][j].getTime() + 3000 <= System.currentTimeMillis() && mp[i][j].isOpened() && !mp[i][j].isClosed()) {
                         mp[i][j].setOpened(false);
                         ok = true;
                     }

@@ -28,6 +28,8 @@ public class ChatDTO {
     private int c;
     private List<String> names;
     private Map<String, Integer> points;
+    private int map[][];
+
     public void init() {
         names = new ArrayList<>();
         points = new HashMap<>();

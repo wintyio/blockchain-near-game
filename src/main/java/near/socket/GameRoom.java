@@ -86,6 +86,7 @@ public class GameRoom {
     }
 
     public <T> void sendMap(GameService service) {
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.MAP).roomId(getRoomId()).build();
         int mp[][] = new int[r][c];
         for (int i=0; i<r; i++) {
             for (int j=0; j<c; j++) {
@@ -93,7 +94,8 @@ public class GameRoom {
                 else mp[i][j] = 0;
             }
         }
-        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), mp));
+        chatDTO.setMap(mp);
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendPoint(GameService service) {
