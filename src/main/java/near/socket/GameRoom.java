@@ -58,7 +58,6 @@ public class GameRoom {
                     // 카드 오픈 성공
                     // 동시성 제어 필요
                     card.open(player);
-                    sendMap(service);
                     for (int i=0; i<r; i++) {
                         for (int j=0; j<c; j++) {
                             if (i == message.getR() && j == message.getC()) continue;
