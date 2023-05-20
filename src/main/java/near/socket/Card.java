@@ -14,19 +14,19 @@ public class Card {
     private boolean opened;
     private boolean closed;
     private long time;
-    private Player player;
+    private String accountId;
     @Builder
-    public Card(int num, boolean opened, boolean closed, long time, Player player) {
+    public Card(int num, boolean opened, boolean closed, long time, String accountId) {
         this.num = num;
         this.opened = false;
         this.closed = false;
-        this.player = null;
+        this.accountId = "";
         this.time = System.currentTimeMillis();
     }
 
-    public void open(Player player) {
+    public void open(String accountId) {
         this.opened = true;
-        this.player = player;
+        this.accountId = accountId;
         this.time = System.currentTimeMillis();
     }
 }
