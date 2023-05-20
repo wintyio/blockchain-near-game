@@ -129,12 +129,11 @@ public class GameRoom {
     }
 
     public <T> void sendPoint(GameService service) {
-        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.POINT).roomId(getRoomId()).build();
-        chatDTO.init();
-
+        Map<String, Integer> points = new HashMap<>();
         for (Player player : players.values()) {
-            chatDTO.getPoints().put(player.getAccountId(), player.getPoint());
+            points.put(player.getAccountId(), player.getPoint());
         }
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.POINT).roomId(getRoomId()).points(points).build();
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
@@ -144,14 +143,11 @@ public class GameRoom {
     }
 
     public <T> void sendStart(GameService service) {
-        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.START).roomId(getRoomId()).build();
-        chatDTO.init();
-
+        List<String> names = new ArrayList<>();
         for (Player player : players.values()) {
-            log.info(player.getAccountId());
-            chatDTO.addPlayer(player.getAccountId());
-            chatDTO.setAccountId(player.getAccountId());
+            names.add(player.getAccountId());
         }
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.START).roomId(getRoomId()).names(names).build();
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 

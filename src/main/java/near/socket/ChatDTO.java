@@ -30,12 +30,4 @@ public class ChatDTO {
     private Map<String, Integer> points;
     private int map[][];
     private int time;
-
-    public void init() {
-        names = new ArrayList<>();
-        points = new HashMap<>();
-    }
-    public void addPlayer(String accountId) {
-        names.add(accountId);
-    }
 }
