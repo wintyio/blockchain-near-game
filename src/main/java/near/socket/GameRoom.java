@@ -99,7 +99,7 @@ public class GameRoom {
                                     sendMap(service);
                                     card.setOpened(false);
                                     card2.setOpened(false);
-                                    Thread.sleep(600);
+                                    Thread.sleep(800);
                                 }
                             }
                         }

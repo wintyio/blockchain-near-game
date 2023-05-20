@@ -105,14 +105,14 @@ public class GameService {
         for (Player player : readyQueue) {
             if (player.getSession().equals(session)) {
                 readyQueue.remove(player);
-                break;
+                // break;
             }
         }
         for (GameRoom room : gameRooms.values()) {
             for (Player player : room.getPlayers().values()) {
                 if (player.getSession().equals(session)) {
                     room.getPlayers().remove(player.getSession());
-                    break;
+                    // break;
                 }
             }
         }
