@@ -47,11 +47,11 @@ public class GameService {
         log.info("overTime");
         for (GameRoom room : gameRooms.values()) {
             Card[][] mp = room.getMatrix();
-            int x = room.getX();
-            int y = room.getY();
+            int r = room.getR();
+            int c = room.getC();
             boolean ok = false;
-            for (int i=0; i<x; i++) {
-                for (int j=0; j<y; j++) {
+            for (int i=0; i<r; i++) {
+                for (int j=0; j<c; j++) {
                     if (mp[i][j].getTime() + 3000 >= System.currentTimeMillis() && mp[i][j].isOpened() && !mp[i][j].isClosed()) {
                         mp[i][j].setOpened(false);
                         ok = true;
@@ -89,8 +89,8 @@ public class GameService {
         String roomId = UUID.randomUUID().toString();
 
         GameRoom room = GameRoom.builder()
-                .x(5)
-                .y(10)
+                .r(5)
+                .c(10)
                 .roomId(roomId)
                 .build();
 

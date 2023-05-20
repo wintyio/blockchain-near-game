@@ -16,20 +16,20 @@ public class GameRoom {
     private String roomId; // 채팅방 아이디
     private Map<WebSocketSession, Player> players = new LinkedHashMap<>();
     private Card[][] matrix;
-    private int x;
-    private int y;
+    private int r;
+    private int c;
     @Builder
-    public GameRoom(String roomId, int x, int y){
+    public GameRoom(String roomId, int r, int c) {
         this.roomId = roomId;
-        this.x = x;
-        this.y = y;
+        this.r = r;
+        this.c = c;
         log.info("game room builder called");
 
-        matrix = new Card[x][y];
+        matrix = new Card[r][c];
         int now = 1;
         int cnt = 0;
-        for (int i=0; i<x; i++) {
-            for (int j=0; j<y; j++) {
+        for (int i=0; i<r; i++) {
+            for (int j=0; j<c; j++) {
                 matrix[i][j] = Card.builder().num(now).build();
                 cnt ^= 1;
                 if (cnt == 0) now++;
@@ -58,8 +58,8 @@ public class GameRoom {
                     // 카드 오픈 성공
                     // 동시성 제어 필요
                     card.open(player);
-                    for (int i=0; i<x; i++) {
-                        for (int j = 0; j < y; j++) {
+                    for (int i=0; i<r; i++) {
+                        for (int j=0; j<c; j++) {
                             if (i == message.getX() && j == message.getY()) continue;
                             if (matrix[i][j].isOpened() && matrix[i][j].getPlayer().equals(player)) {
                                 Card card2 = matrix[message.getX()][message.getY()];
@@ -86,9 +86,9 @@ public class GameRoom {
     }
 
     public <T> void sendMap(GameService service) {
-        int mp[][] = new int[x][y];
-        for (int i=0; i<x; i++) {
-            for (int j=0; j<y; j++) {
+        int mp[][] = new int[r][c];
+        for (int i=0; i<r; i++) {
+            for (int j=0; j<c; j++) {
                 if (matrix[i][j].isClosed() || matrix[i][j].isOpened()) mp[i][j] = matrix[i][j].getNum();
                 else mp[i][j] = 0;
             }
