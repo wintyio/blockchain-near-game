@@ -4,6 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.socket.WebSocketSession;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -12,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class ChatDTO {
     // 메시지  타입 : 입장, 채팅
     public enum MessageType{
-        ENTER, TALK, OPEN, START
+        ENTER, TALK, OPEN, START, MAP, POINT
     }
 
     private MessageType type; // 메시지 타입
@@ -20,4 +26,13 @@ public class ChatDTO {
     private String accountId;
     private int x;
     private int y;
+    private List<String> names;
+    private Map<String, Integer> points;
+    public void init() {
+        names = new ArrayList<>();
+        points = new HashMap<>();
+    }
+    public void addPlayer(String accountId) {
+        names.add(accountId);
+    }
 }

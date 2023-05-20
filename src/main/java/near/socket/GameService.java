@@ -89,6 +89,8 @@ public class GameService {
         String roomId = UUID.randomUUID().toString();
 
         GameRoom room = GameRoom.builder()
+                .x(5)
+                .y(10)
                 .roomId(roomId)
                 .build();
 
@@ -97,6 +99,7 @@ public class GameService {
     }
 
     public <T> void sendMessage(WebSocketSession session, T message) {
+        log.info("howwww");
         try{
             session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
         } catch (IOException e) {

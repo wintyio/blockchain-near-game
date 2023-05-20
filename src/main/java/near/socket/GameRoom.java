@@ -2,6 +2,7 @@ package near.socket;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
+@Slf4j
 public class GameRoom {
     private String roomId; // 채팅방 아이디
     private Map<WebSocketSession, Player> players = new LinkedHashMap<>();
@@ -19,10 +21,11 @@ public class GameRoom {
     @Builder
     public GameRoom(String roomId, int x, int y){
         this.roomId = roomId;
-        matrix = new Card[x][y];
         this.x = x;
         this.y = y;
+        log.info("game room builder called");
 
+        matrix = new Card[x][y];
         int now = 1;
         int cnt = 0;
         for (int i=0; i<x; i++) {
@@ -65,7 +68,10 @@ public class GameRoom {
                                     card2.setClosed(true);
                                     if (card.getNum() == -1) {
                                         player.setPoint(player.getPoint() - 1);
+                                    } else {
+                                        player.setPoint(player.getPoint() + 1);
                                     }
+                                    sendPoint(service);
                                 } else {
                                     card.setOpened(false);
                                     card2.setOpened(false);
@@ -90,8 +96,25 @@ public class GameRoom {
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), mp));
     }
 
+    public <T> void sendPoint(GameService service) {
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.POINT).roomId(getRoomId()).build();
+        chatDTO.init();
+
+        for (Player player : players.values()) {
+            chatDTO.getPoints().put(player.getAccountId(), player.getPoint());
+        }
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
+    }
+
     public <T> void sendStart(GameService service) {
         ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.START).roomId(getRoomId()).build();
+        chatDTO.init();
+
+        for (Player player : players.values()) {
+            log.info(player.getAccountId());
+            chatDTO.addPlayer(player.getAccountId());
+            chatDTO.setAccountId(player.getAccountId());
+        }
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
