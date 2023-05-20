@@ -44,7 +44,6 @@ public class GameService {
 
     @Scheduled(cron = "0/1 * * * * ?")
     public void overTime() throws Exception {
-        log.info("overTime");
         for (GameRoom room : gameRooms.values()) {
             Card[][] mp = room.getMatrix();
             int r = room.getR();

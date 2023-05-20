@@ -58,11 +58,12 @@ public class GameRoom {
                     // 카드 오픈 성공
                     // 동시성 제어 필요
                     card.open(player);
+                    sendMap(service);
                     for (int i=0; i<r; i++) {
                         for (int j=0; j<c; j++) {
                             if (i == message.getR() && j == message.getC()) continue;
-                            if (matrix[i][j].isOpened() && matrix[i][j].getPlayer().equals(player)) {
-                                Card card2 = matrix[message.getR()][message.getC()];
+                            if (matrix[i][j].isOpened() && !matrix[i][j].isClosed() && matrix[i][j].getPlayer().equals(player)) {
+                                Card card2 = matrix[i][j];
                                 if (card.getNum() == card2.getNum()) {
                                     card.setClosed(true);
                                     card2.setClosed(true);
@@ -95,7 +96,7 @@ public class GameRoom {
             }
         }
         chatDTO.setMap(mp);
-        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), mp));
     }
 
     public <T> void sendPoint(GameService service) {
