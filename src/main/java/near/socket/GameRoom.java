@@ -99,7 +99,7 @@ public class GameRoom {
                                     sendMap(service);
                                     card.setOpened(false);
                                     card2.setOpened(false);
-                                    Thread.sleep(1000);
+                                    Thread.sleep(300);
                                 }
                             }
                         }
@@ -149,6 +149,7 @@ public class GameRoom {
         }
         ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.START).roomId(getRoomId()).names(names).build();
         players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
+        sendMap(service);
     }
 
     public <T> void sendMessage(T message, GameService service) {

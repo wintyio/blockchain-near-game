@@ -44,6 +44,11 @@ public class GameService {
 
     @Scheduled(cron = "0/1 * * * * ?")
     public void overTime() throws Exception {
+        for (Player player : readyQueue) {
+            if (!player.getSession().isOpen()) {
+                readyQueue.remove(player);
+            }
+        }
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
             if (room.getTime() == 0) {
@@ -62,6 +67,12 @@ public class GameService {
                 }
                 gameRooms.remove(room.getRoomId());
                 continue;
+            }
+            for (Player player : room.getPlayers().values()) {
+                if (!player.getSession().isOpen()) {
+                    room.getPlayers().remove(player.getSession());
+                    break;
+                }
             }
             room.sendTime(this);
             Card[][] mp = room.getMatrix();
