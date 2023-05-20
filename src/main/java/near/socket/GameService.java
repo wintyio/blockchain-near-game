@@ -23,7 +23,7 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 2;
+    static final int LIMIT = 1;
     @Scheduled(cron = "0/5 * * * * ?")
     public void autoUpdate() throws Exception {
 
@@ -38,7 +38,6 @@ public class GameService {
                 readyQueue.remove(player);
                 room.addPlayer(player);
             }
-            gameRooms.put(roomId, room);
             room.sendStart(this);
         }
     }
@@ -46,6 +45,8 @@ public class GameService {
     @Scheduled(cron = "0/1 * * * * ?")
     public void overTime() throws Exception {
         for (GameRoom room : gameRooms.values()) {
+            room.setTime(room.getTime() - 1);
+            room.sendTime(this);
             Card[][] mp = room.getMatrix();
             int r = room.getR();
             int c = room.getC();

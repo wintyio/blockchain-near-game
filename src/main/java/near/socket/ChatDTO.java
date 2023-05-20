@@ -18,7 +18,7 @@ import java.util.Map;
 public class ChatDTO {
     // 메시지  타입 : 입장, 채팅
     public enum MessageType{
-        ENTER, TALK, OPEN, START, MAP, POINT, READY
+        ENTER, TALK, OPEN, START, MAP, POINT, READY, TIME
     }
 
     private MessageType type; // 메시지 타입
@@ -29,6 +29,7 @@ public class ChatDTO {
     private List<String> names;
     private Map<String, Integer> points;
     private int map[][];
+    private int time;
 
     public void init() {
         names = new ArrayList<>();

@@ -16,6 +16,7 @@ public class GameRoom {
     private String roomId; // 채팅방 아이디
     private Map<WebSocketSession, Player> players = new LinkedHashMap<>();
     private Card[][] matrix;
+    private int time;
     private int r;
     private int c;
     @Builder
@@ -23,6 +24,7 @@ public class GameRoom {
         this.roomId = roomId;
         this.r = r;
         this.c = c;
+        this.time = 60;
         log.info("game room builder called");
 
         matrix = new Card[r][c];
@@ -87,6 +89,11 @@ public class GameRoom {
                 }
                 break;
         }
+    }
+
+    public <T> void sendTime(GameService service) {
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.TIME).roomId(getRoomId()).time(time).build();
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendMap(GameService service) {
