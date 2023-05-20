@@ -23,7 +23,7 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 2;
+    static final int LIMIT = 4;
     @Scheduled(cron = "0/3 * * * * ?")
     public void autoUpdate() throws Exception {
 
@@ -47,6 +47,7 @@ public class GameService {
         for (Player player : readyQueue) {
             if (!player.getSession().isOpen()) {
                 readyQueue.remove(player);
+                break;
             }
         }
         for (GameRoom room : gameRooms.values()) {
@@ -104,12 +105,14 @@ public class GameService {
         for (Player player : readyQueue) {
             if (player.getSession().equals(session)) {
                 readyQueue.remove(player);
+                break;
             }
         }
         for (GameRoom room : gameRooms.values()) {
             for (Player player : room.getPlayers().values()) {
                 if (player.getSession().equals(session)) {
                     room.getPlayers().remove(player.getSession());
+                    break;
                 }
             }
         }
