@@ -50,7 +50,7 @@ public class GameRoom {
                 sendMessage(message, service);
                 break;
             case OPEN:
-                Card card = matrix[message.getX()][message.getY()];
+                Card card = matrix[message.getR()][message.getC()];
                 if (card.isOpened() || card.isClosed()) {
                     // 카드 오픈 실패
                 }
@@ -60,9 +60,9 @@ public class GameRoom {
                     card.open(player);
                     for (int i=0; i<r; i++) {
                         for (int j=0; j<c; j++) {
-                            if (i == message.getX() && j == message.getY()) continue;
+                            if (i == message.getR() && j == message.getC()) continue;
                             if (matrix[i][j].isOpened() && matrix[i][j].getPlayer().equals(player)) {
-                                Card card2 = matrix[message.getX()][message.getY()];
+                                Card card2 = matrix[message.getR()][message.getC()];
                                 if (card.getNum() == card2.getNum()) {
                                     card.setClosed(true);
                                     card2.setClosed(true);

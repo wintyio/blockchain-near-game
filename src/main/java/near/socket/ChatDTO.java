@@ -24,8 +24,8 @@ public class ChatDTO {
     private MessageType type; // 메시지 타입
     private String roomId; // 방 번호
     private String accountId;
-    private int x;
-    private int y;
+    private int r;
+    private int c;
     private List<String> names;
     private Map<String, Integer> points;
     public void init() {
