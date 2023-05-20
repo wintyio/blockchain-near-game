@@ -42,7 +42,7 @@ public class GameRoom {
         players.put(player.getSession(), player);
     }
 
-    public void handleAction(WebSocketSession session, ChatDTO message, GameService service) {
+    public void handleAction(WebSocketSession session, ChatDTO message, GameService service) throws Exception {
         Player player = players.get(session);
         for (Player p : players.values()) {
             log.info("player : {}", p);
@@ -75,6 +75,8 @@ public class GameRoom {
                                     }
                                     sendPoint(service);
                                 } else {
+                                    sendMap(service);
+                                    Thread.sleep(100);
                                     card.setOpened(false);
                                     card2.setOpened(false);
                                 }
