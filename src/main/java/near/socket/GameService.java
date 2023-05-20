@@ -44,12 +44,12 @@ public class GameService {
 
     @Scheduled(cron = "0/1 * * * * ?")
     public void overTime() throws Exception {
-        // for (Player player : readyQueue) {
-        //    if (!player.getSession().isOpen()) {
-        //        readyQueue.remove(player);
-        //         break;
-        //     }
-        // }
+        for (Player player : readyQueue) {
+            if (!player.getSession().isOpen()) {
+                readyQueue.remove(player);
+                break;
+             }
+        }
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
             if (room.getTime() == 0) {
@@ -78,12 +78,12 @@ public class GameService {
                 gameRooms.remove(room.getRoomId());
                 continue;
             }
-            // for (Player player : room.getPlayers().values()) {
-            //     if (!player.getSession().isOpen()) {
-            //         room.getPlayers().remove(player.getSession());
-            //         break;
-            //     }
-            // }
+            for (Player player : room.getPlayers().values()) {
+                if (!player.getSession().isOpen()) {
+                    room.getPlayers().remove(player.getSession());
+                    break;
+                }
+            }
             room.sendTime(this);
             Card[][] mp = room.getMatrix();
             int r = room.getR();
@@ -105,14 +105,14 @@ public class GameService {
         for (Player player : readyQueue) {
             if (player.getSession().equals(session)) {
                 readyQueue.remove(player);
-                // break;
+                break;
             }
         }
         for (GameRoom room : gameRooms.values()) {
             for (Player player : room.getPlayers().values()) {
                 if (player.getSession().equals(session)) {
                     room.getPlayers().remove(player.getSession());
-                    // break;
+                    break;
                 }
             }
         }
@@ -166,8 +166,10 @@ public class GameService {
     }
 
     public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
+        try {
+            synchronized (session) {
+                session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
+            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
