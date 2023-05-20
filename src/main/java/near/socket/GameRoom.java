@@ -34,7 +34,7 @@ public class GameRoom {
         this.roomId = roomId;
         this.r = r;
         this.c = c;
-        this.time = 60;
+        this.time = 63;
         log.info("game room builder called");
 
         matrix = new Card[r][c];
