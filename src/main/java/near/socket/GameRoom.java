@@ -96,7 +96,7 @@ public class GameRoom {
             }
         }
         chatDTO.setMap(mp);
-        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), mp));
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendPoint(GameService service) {
