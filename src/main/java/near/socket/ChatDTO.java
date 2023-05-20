@@ -30,4 +30,5 @@ public class ChatDTO {
     private Map<String, Integer> points;
     private int map[][];
     private int time;
+    private int winNum;
 }

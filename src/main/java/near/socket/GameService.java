@@ -23,7 +23,7 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 4;
+    static final int LIMIT = 2;
     @Scheduled(cron = "0/3 * * * * ?")
     public void autoUpdate() throws Exception {
 
@@ -52,15 +52,24 @@ public class GameService {
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
             if (room.getTime() == 0) {
-                Player best = null;
+                List<Player> best = new ArrayList<>();
                 // 동점자 처리 필요
                 for (Player player : room.getPlayers().values()) {
-                    if (best == null || best.getPoint() < player.getPoint()) {
-                        best = player;
+                    if (best.isEmpty()) {
+                        best.add(player);
+                    }
+                    else if (best.get(0).getPoint() == player.getPoint()) {
+                        best.add(player);
+                    }
+                    else if (best.get(0).getPoint() < player.getPoint()) {
+                        best.clear();
+                        best.add(player);
                     }
                 }
-                sendMessage(best.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).build());
-                room.getPlayers().remove(best.getSession());
+                for (Player player : best) {
+                    sendMessage(player.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).winNum(best.size()).build());
+                    room.getPlayers().remove(player.getSession());
+                }
                 room.sendLose(this);
                 for (Player p : room.getPlayers().values()) {
                     p.getSession().close();
