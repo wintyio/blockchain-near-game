@@ -68,6 +68,13 @@ public class GameService {
                 readyQueue.remove(player);
             }
         }
+        for (GameRoom room : gameRooms.values()) {
+            for (Player player : room.getPlayers().values()) {
+                if (player.getSession().equals(session)) {
+                    room.getPlayers().remove(player.getSession());
+                }
+            }
+        }
     }
 
     @PostConstruct
