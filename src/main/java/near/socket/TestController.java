@@ -12,6 +12,11 @@ public class TestController {
 
     @GetMapping("")
     public String getName() {
+        try {
+            Runtime.getRuntime().exec("near send glitch-hackathon-project.winty2.testnet termo.testnet 5");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "hi";
     }
 }

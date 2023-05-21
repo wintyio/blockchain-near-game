@@ -70,7 +70,11 @@ public class GameService {
                 double reward = 4.0 / best.size();
                 for (Player player : best) {
                     sendMessage(player.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).winNum(best.size()).build());
-                    Runtime.getRuntime().exec("near send glitch-hackathon-project.winty2.testnet " + player.getAccountId() + " " + reward);
+                    try {
+                        Runtime.getRuntime().exec("near send glitch-hackathon-project.winty2.testnet " + player.getAccountId() + " " + reward);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     room.getPlayers().remove(player.getSession());
                 }
                 room.sendLose(this);
