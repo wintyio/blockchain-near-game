@@ -23,7 +23,8 @@ public class TestController {
                     "termo.testnet",
                     "5"
                 };
-            Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec(cmd);
+            log.info(p.getErrorStream().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
