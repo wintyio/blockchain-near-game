@@ -71,7 +71,7 @@ public class GameService {
                 for (Player player : best) {
                     sendMessage(player.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).winNum(best.size()).build());
                     try {
-                        Runtime.getRuntime().exec("near send glitch-hackathon-project.winty2.testnet " + player.getAccountId() + " " + reward);
+                        Runtime.getRuntime().exec("/home/ubuntu/.nvm/versions/node/v16.13.2/bin/near send glitch-hackathon-project.winty2.testnet " + player.getAccountId() + " " + reward);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
