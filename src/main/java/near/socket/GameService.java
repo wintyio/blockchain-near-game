@@ -72,7 +72,7 @@ public class GameService {
                         best.add(player);
                     }
                 }
-                double reward = 4.0 / best.size();
+                double reward = (double)LIMIT / best.size() * 0.9;
                 for (Player player : best) {
                     sendMessage(player.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).winNum(best.size()).build());
 
@@ -99,6 +99,7 @@ public class GameService {
                         conn.setDoOutput(true);
                         conn.getOutputStream().write(postDataBytes); // 호출
 
+                        /*
                         StringBuilder result = new StringBuilder();
                         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                             String line;
@@ -106,6 +107,7 @@ public class GameService {
                                 result.append(line);
                             }
                         }
+                        */
 
                     } catch (IOException e) {
                         e.printStackTrace();
