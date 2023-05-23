@@ -98,7 +98,7 @@ public class GameRoom {
                     }
                     player.getMyCard().clear();
                 }
-                Thread.sleep(600);
+                Thread.sleep(800);
                 sendMap(service);
                 break;
         }
