@@ -1,2 +1,3 @@
-# blockchain-near-game
-blockchain-near-game
+# Flip Dash
+
+https://flipdash.winty.io/
