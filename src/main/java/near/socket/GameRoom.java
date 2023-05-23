@@ -39,12 +39,13 @@ public class GameRoom {
 
         matrix = new Card[r][c];
         int order[] = new int[r*c];
-        for (int i=0; i<16; i++) {
-            order[i] = -1;
-        }
+        order[0] = -1;
+        order[1] = -1;
+        order[2] = -1;
+        order[3] = -1;
         int now = 1;
         int cnt = 0;
-        for (int i=16; i<r*c; i++) {
+        for (int i=4; i<r*c; i++) {
             order[i] = now;
             cnt ^= 1;
             if (cnt == 0) now++;
