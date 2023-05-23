@@ -75,7 +75,7 @@ public class GameRoom {
             case OPEN:
                 Card card = matrix[message.getR()][message.getC()];
                 synchronized (this) {
-                    if (card.isOpened() || card.isClosed() || player.getMyCard().size() >= 2) break;
+                    if (card.isOpened() || card.isClosed()) break;
                     player.getMyCard().add(card);
                     card.open(player.getAccountId());
                 }
