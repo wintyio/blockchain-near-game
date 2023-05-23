@@ -15,18 +15,14 @@ import java.util.List;
 @Setter
 public class Player {
     private int point;
-    private int needMap;
-    private int needPoint;
     private String accountId;
-    private ArrayList<Card> myCard;
     private WebSocketSession session;
+    private ArrayList<Card> myCard;
     @Builder
-    public Player(int point, int needMap, int needPoint, String accountId, ArrayList<Card> myCard, WebSocketSession session) {
+    public Player(int point, String accountId, WebSocketSession session, ArrayList<Card> myCard) {
         this.point = point;
         this.accountId = accountId;
         this.session = session;
         this.myCard = new ArrayList<>();
-        this.needMap = needMap;
-        this.needPoint = needPoint;
     }
 }

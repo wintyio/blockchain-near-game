@@ -33,39 +33,6 @@ public class GameService {
     // public void autoUpdate() throws Exception {
     // }
 
-    @Scheduled(fixedDelay = 50)
-    public void update() throws Exception {
-        for (GameRoom room : gameRooms.values()) {
-            for (Player player : room.getPlayers().values()) {
-                if (player.getNeedMap() == 1) {
-                    player.setNeedMap(0);
-                    ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.MAP).roomId(room.getRoomId()).build();
-                    int r = room.getR();
-                    int c = room.getC();
-                    Card[][] matrix = room.getMatrix();
-                    int mp[][] = new int[r][c];
-                    for (int i=0; i<r; i++) {
-                        for (int j=0; j<c; j++) {
-                            if (matrix[i][j].isClosed() || matrix[i][j].isOpened()) mp[i][j] = matrix[i][j].getNum();
-                            else mp[i][j] = 0;
-                        }
-                    }
-                    chatDTO.setMap(mp);
-                    sendMessage(player.getSession(), chatDTO);
-                }
-                if (player.getNeedPoint() == 1) {
-                    player.setNeedPoint(0);
-                    Map<String, Integer> points = new HashMap<>();
-                    for (Player p : room.getPlayers().values()) {
-                        points.put(p.getAccountId(), p.getPoint());
-                    }
-                    ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.POINT).roomId(room.getRoomId()).points(points).build();
-                    sendMessage(player.getSession(), chatDTO);
-                }
-            }
-        }
-    }
-
     // fixedDelay를 사용 했는데, 방이 여러개라면 조금씩 느려질 수 있다. 더 좋은 방법으로 개선 필요
     @Scheduled(fixedDelay = 1000)
     public void overTime() throws Exception {
@@ -73,7 +40,7 @@ public class GameService {
             if (!player.getSession().isOpen()) {
                 readyQueue.remove(player);
                 break;
-             }
+            }
         }
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);

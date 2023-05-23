@@ -75,9 +75,9 @@ public class GameRoom {
             case OPEN:
                 Card card = matrix[message.getR()][message.getC()];
                 // synchronized (this) {
-                    if (card.isOpened() || card.isClosed()) break;
-                    player.getMyCard().add(card);
-                    card.open(player.getAccountId());
+                if (card.isOpened() || card.isClosed()) break;
+                player.getMyCard().add(card);
+                card.open(player.getAccountId());
                 // }
                 sendMap(service);
                 if (player.getMyCard().size() >= 2) {
@@ -110,15 +110,25 @@ public class GameRoom {
     }
 
     public <T> void sendMap(GameService service) {
-        for (Player player : players.values()) {
-            player.setNeedMap(1);
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.MAP).roomId(getRoomId()).build();
+        int mp[][] = new int[r][c];
+        for (int i=0; i<r; i++) {
+            for (int j=0; j<c; j++) {
+                if (matrix[i][j].isClosed() || matrix[i][j].isOpened()) mp[i][j] = matrix[i][j].getNum();
+                else mp[i][j] = 0;
+            }
         }
+        chatDTO.setMap(mp);
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendPoint(GameService service) {
+        Map<String, Integer> points = new HashMap<>();
         for (Player player : players.values()) {
-            player.setNeedPoint(1);
+            points.put(player.getAccountId(), player.getPoint());
         }
+        ChatDTO chatDTO = ChatDTO.builder().type(ChatDTO.MessageType.POINT).roomId(getRoomId()).points(points).build();
+        players.entrySet().parallelStream().forEach(entry -> service.sendMessage(entry.getKey(), chatDTO));
     }
 
     public <T> void sendLose(GameService service) {
