@@ -74,11 +74,11 @@ public class GameRoom {
                 break;
             case OPEN:
                 Card card = matrix[message.getR()][message.getC()];
-                // synchronized (this) {
-                if (card.isOpened() || card.isClosed()) break;
-                player.getMyCard().add(card);
-                card.open(player.getAccountId());
-                // }
+                synchronized (this) {
+                    if (card.isOpened() || card.isClosed()) break;
+                    player.getMyCard().add(card);
+                    card.open(player.getAccountId());
+                }
                 sendMap(service);
                 if (player.getMyCard().size() >= 2) {
                     Card card1 = player.getMyCard().get(0);
