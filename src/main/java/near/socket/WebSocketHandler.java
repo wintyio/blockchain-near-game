@@ -39,7 +39,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             GameRoom room = service.findRoomById(chatMessage.getRoomId());
             if (room == null) return;
             Player player = room.getPlayers().get(session);
-            if (player == null || player.getMyCard().size() == 2) return;
+            if (player == null) return;
             room.handleAction(session, chatMessage, service);
         }
     }
