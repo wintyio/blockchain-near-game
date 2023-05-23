@@ -29,23 +29,9 @@ public class GameService {
     private Set<Player> readyQueue;
 
     static final int LIMIT = 2;
-    @Scheduled(cron = "0/3 * * * * ?")
-    public void autoUpdate() throws Exception {
-
-        // 세션 끊기면 삭제하기 필요
-        log.info("queue size : {}", readyQueue.size());
-        if (readyQueue.size() >= LIMIT) {
-            String roomId = UUID.randomUUID().toString();
-            GameRoom room = createRoom();
-            log.info("roomId {} created", roomId);
-            for (int i=0; i<LIMIT; i++) {
-                Player player = readyQueue.iterator().next();
-                readyQueue.remove(player);
-                room.addPlayer(player);
-            }
-            room.sendStart(this);
-        }
-    }
+    // @Scheduled(cron = "0/3 * * * * ?")
+    // public void autoUpdate() throws Exception {
+    // }
 
     // fixedDelay를 사용 했는데, 방이 여러개라면 조금씩 느려질 수 있다. 더 좋은 방법으로 개선 필요
     @Scheduled(fixedDelay = 1000)
@@ -184,6 +170,19 @@ public class GameService {
                 .build();
         for (Player p : readyQueue) {
             sendMessage(p.getSession(), chatDTO);
+        }
+
+        log.info("ready queue size : {}", readyQueue.size());
+        if (readyQueue.size() >= LIMIT) {
+            String roomId = UUID.randomUUID().toString();
+            GameRoom room = createRoom();
+            log.info("roomId {} created", roomId);
+            for (int i=0; i<LIMIT; i++) {
+                Player p = readyQueue.iterator().next();
+                readyQueue.remove(p);
+                room.addPlayer(p);
+            }
+            room.sendStart(this);
         }
     }
 

@@ -16,10 +16,10 @@ import java.util.List;
 public class Player {
     private int point;
     private String accountId;
-    private List<Card> myCard;
     private WebSocketSession session;
+    private ArrayList<Card> myCard;
     @Builder
-    public Player(int point, String accountId, WebSocketSession session) {
+    public Player(int point, String accountId, WebSocketSession session, ArrayList<Card> myCard) {
         this.point = point;
         this.accountId = accountId;
         this.session = session;
