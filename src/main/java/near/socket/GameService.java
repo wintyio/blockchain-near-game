@@ -47,7 +47,8 @@ public class GameService {
         }
     }
 
-    @Scheduled(cron = "0/1 * * * * ?")
+    // fixedDelay를 사용 했는데, 방이 여러개라면 조금씩 느려질 수 있다. 더 좋은 방법으로 개선 필요
+    @Scheduled(fixedDelay = 1000)
     public void overTime() throws Exception {
         for (Player player : readyQueue) {
             if (!player.getSession().isOpen()) {
@@ -98,8 +99,7 @@ public class GameService {
                         conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
                         conn.setDoOutput(true);
                         conn.getOutputStream().write(postDataBytes); // 호출
-                        conn.disconnect();
-                        /*
+
                         StringBuilder result = new StringBuilder();
                         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                             String line;
@@ -107,7 +107,7 @@ public class GameService {
                                 result.append(line);
                             }
                         }
-                        */
+                        conn.disconnect();
 
                     } catch (IOException e) {
                         e.printStackTrace();
