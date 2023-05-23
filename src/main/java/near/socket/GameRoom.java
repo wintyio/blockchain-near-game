@@ -73,39 +73,37 @@ public class GameRoom {
                 sendMessage(message, service);
                 break;
             case OPEN:
-                Card card = matrix[message.getR()][message.getC()];
-                if (card.isOpened() || card.isClosed()) {
-                    // 카드 오픈 실패
-                }
-                else {
-                    // 카드 오픈 성공
-                    // 동시성 제어 필요
-                    card.open(player.getAccountId());
-                    for (int i=0; i<r; i++) {
-                        for (int j=0; j<c; j++) {
-                            if (i == message.getR() && j == message.getC()) continue;
-                            if (matrix[i][j].isOpened() && !matrix[i][j].isClosed() && matrix[i][j].getAccountId().equals(player.getAccountId())) {
-                                Card card2 = matrix[i][j];
-                                if (card.getNum() == card2.getNum()) {
-                                    card.setClosed(true);
-                                    card2.setClosed(true);
-                                    if (card.getNum() == -1) {
-                                        player.setPoint(player.getPoint() - 1);
-                                    } else {
-                                        player.setPoint(player.getPoint() + 1);
-                                    }
-                                    sendPoint(service);
+                synchronized (this) { // player 별로 가 아닌 room 별로 있어야 한다. 동시에 서로 두명의 플레이어가 들어오면 문제가 발생
+                    Card card = matrix[message.getR()][message.getC()];
+                    if (card.isOpened() || card.isClosed()) {
+                        // 카드 오픈 실패
+                    } else {
+                        // 카드 포슨 성공
+                        player.getMyCard().add(card);
+                        card.open(player.getAccountId());
+                        sendMap(service);
+                        if (player.getMyCard().size() == 2) {
+                            Card card1 = player.getMyCard().get(0);
+                            Card card2 = player.getMyCard().get(1);
+                            if (card1.getNum() == card2.getNum()) {
+                                card1.setClosed(true);
+                                card2.setClosed(true);
+                                if (card1.getNum() == -1) {
+                                    player.setPoint(player.getPoint() - 1);
                                 } else {
-                                    sendMap(service);
-                                    card.setOpened(false);
-                                    card2.setOpened(false);
-                                    Thread.sleep(800);
+                                    player.setPoint(player.getPoint() + 1);
                                 }
+                                sendPoint(service);
+                            } else {
+                                card1.setOpened(false);
+                                card2.setOpened(false);
                             }
+                            player.getMyCard().clear();
                         }
                     }
-                    sendMap(service);
                 }
+                Thread.sleep(800);
+                sendMap(service);
                 break;
         }
     }
