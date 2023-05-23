@@ -98,7 +98,7 @@ public class GameService {
                         conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
                         conn.setDoOutput(true);
                         conn.getOutputStream().write(postDataBytes); // 호출
-
+                        conn.disconnect();
                         /*
                         StringBuilder result = new StringBuilder();
                         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
