@@ -11,7 +11,12 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Slf4j
@@ -23,32 +28,19 @@ public class GameService {
     private Map<String, GameRoom> gameRooms;
     private Set<Player> readyQueue;
 
-    static final int LIMIT = 2;
-    @Scheduled(cron = "0/3 * * * * ?")
-    public void autoUpdate() throws Exception {
+    static final int LIMIT = 4;
+    // @Scheduled(cron = "0/3 * * * * ?")
+    // public void autoUpdate() throws Exception {
+    // }
 
-        // 세션 끊기면 삭제하기 필요
-        log.info("queue size : {}", readyQueue.size());
-        if (readyQueue.size() >= LIMIT) {
-            String roomId = UUID.randomUUID().toString();
-            GameRoom room = createRoom();
-            log.info("roomId {} created", roomId);
-            for (int i=0; i<LIMIT; i++) {
-                Player player = readyQueue.iterator().next();
-                readyQueue.remove(player);
-                room.addPlayer(player);
-            }
-            room.sendStart(this);
-        }
-    }
-
-    @Scheduled(cron = "0/1 * * * * ?")
+    // fixedDelay를 사용 했는데, 방이 여러개라면 조금씩 느려질 수 있다. 더 좋은 방법으로 개선 필요
+    @Scheduled(fixedDelay = 1000)
     public void overTime() throws Exception {
         for (Player player : readyQueue) {
             if (!player.getSession().isOpen()) {
                 readyQueue.remove(player);
                 break;
-             }
+            }
         }
         for (GameRoom room : gameRooms.values()) {
             room.setTime(room.getTime() - 1);
@@ -67,14 +59,45 @@ public class GameService {
                         best.add(player);
                     }
                 }
-                double reward = 4.0 / best.size();
+                double reward = (double)LIMIT / best.size() * 0.9;
                 for (Player player : best) {
                     sendMessage(player.getSession(), ChatDTO.builder().type(ChatDTO.MessageType.WIN).winNum(best.size()).build());
-                    // try {
-                    //     Runtime.getRuntime().exec("/home/ubuntu/.nvm/versions/node/v16.13.2/bin/near send glitch-hackathon-project.winty2.testnet " + player.getAccountId() + " " + reward);
-                    // } catch (IOException e) {
-                    //     e.printStackTrace();
-                    // }
+
+                    String requestURL = "http://pseong.com:3000/transfer";
+                    try {
+                        Map<String,Object> params = new LinkedHashMap<>();
+                        params.put("amt", "" + reward);
+                        params.put("rcv", "" + player.getAccountId());
+
+                        StringBuilder postData = new StringBuilder();
+                        for(Map.Entry<String,Object> param : params.entrySet()) {
+                            if(postData.length() != 0) postData.append('&');
+                            postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                            postData.append('=');
+                            postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                        }
+                        byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+                        URL url = new URL(requestURL);
+                        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+                        conn.setDoOutput(true);
+                        conn.getOutputStream().write(postDataBytes); // 호출
+
+                        StringBuilder result = new StringBuilder();
+                        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                            String line;
+                            while ((line = buffer.readLine()) != null) {
+                                result.append(line);
+                            }
+                        }
+                        conn.disconnect();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     room.getPlayers().remove(player.getSession());
                 }
                 room.sendLose(this);
@@ -147,6 +170,19 @@ public class GameService {
                 .build();
         for (Player p : readyQueue) {
             sendMessage(p.getSession(), chatDTO);
+        }
+
+        log.info("ready queue size : {}", readyQueue.size());
+        if (readyQueue.size() >= LIMIT) {
+            String roomId = UUID.randomUUID().toString();
+            GameRoom room = createRoom();
+            log.info("roomId {} created", roomId);
+            for (int i=0; i<LIMIT; i++) {
+                Player p = readyQueue.iterator().next();
+                readyQueue.remove(p);
+                room.addPlayer(p);
+            }
+            room.sendStart(this);
         }
     }
 

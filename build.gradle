@@ -60,6 +60,10 @@ dependencies {
 
 	// Web socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// js
+	implementation 'org.graalvm.js:js:21.2.0'
+	implementation 'org.graalvm.js:js-scriptengine:21.2.0'
 }
 
 tasks.named('test') {
